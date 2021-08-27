@@ -7,7 +7,7 @@ int main()
 {
     Astroids astroids;
     astroids.run();
-
+    
     sf::RenderWindow window(sf::VideoMode(600, 600), "SFML works!");
 	
     while (window.isOpen())
