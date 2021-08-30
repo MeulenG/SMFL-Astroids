@@ -15,9 +15,10 @@ public:
     ~Player();
 
     float movementspeed;
+    const sf::Vector2f& getPos() const;
 
     void move(const float dirX, const float dirY);
     void update();
-    void render(sf::RenderTarget& target);
+    void render(sf::RenderTarget* target);
 };
 #endif
