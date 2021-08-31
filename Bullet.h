@@ -2,7 +2,6 @@
 #define BULLET_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
 #include <iostream>
 class Bullet
 {
@@ -15,7 +14,7 @@ public:
     ~Bullet();
 
     float movementSpeed;
-    Bullet(sf::Texture * texture, float posX, float posY, float dirX, float dirY, float movement_speed);
+    Bullet(sf::Texture * texture, float pos_x, float pos_y, float dirX, float dirY, float movement_speed);
 
 
     const sf::FloatRect getBounds() const;
@@ -24,12 +23,4 @@ public:
     void update();
     void render(sf::RenderTarget* target);
 };
-
-Bullet::Bullet(/* args */)
-{
-}
-
-Bullet::~Bullet()
-{
-}
 #endif

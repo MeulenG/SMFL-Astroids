@@ -23,7 +23,7 @@ class Astroids {
     
     public:
         Astroids();
-        virtual ~Astroids();
+        ~Astroids();
         //Function
         void run();
 

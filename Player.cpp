@@ -2,6 +2,7 @@
 #include <iostream>
 #include "stdio.h"
 
+
 void Player::initTexture() {
     if(!this->texture.loadFromFile("/home/puhaa/Desktop/SMFL-Astroids/images/Asteroid Spaceship.png"))
      {
