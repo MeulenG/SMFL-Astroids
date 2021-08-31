@@ -2,7 +2,6 @@
 #define ASTROIDS_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
 #include "Player.h"
 #include "Bullet.h"
 #include <map>

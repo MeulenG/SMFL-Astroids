@@ -27,8 +27,7 @@ Player::~Player() {
 
 const sf::Vector2f& Player::getPos() const 
 {
-
-    return this->Sprite.getPositon();
+    return this->Sprite.getPosition();
 }
 
 
@@ -39,6 +38,6 @@ void Player::update() {
 
 }
 
-void Player::render(sf::RenderTarget* target) {
+void Player::render(sf::RenderTarget& target) {
     target.draw(this->Sprite);
 }

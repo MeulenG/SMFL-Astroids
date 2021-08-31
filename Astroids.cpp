@@ -68,7 +68,7 @@ void Astroids::updateInput() {
         this->player->move(0.f, 1.f);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        this->bullets.push_back(new Bullet(this->textures["BULLET"], this-player->getPos().x, this-player->getPos().y 0.f, 0.f, 0.f, 0.f, 0.f));
+        this->bullets.push_back(new Bullet(this->textures["BULLET"], 0.f, 0.f, 0.f, 0.f, 0.f));
     }
 }
 
