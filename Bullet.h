@@ -7,8 +7,9 @@ class Bullet
 {
 private:
     sf::Sprite shape;
-
+    
     sf::Vector2f direction;
+    void initBullet();
 public:
     Bullet(/* args */);
     ~Bullet();

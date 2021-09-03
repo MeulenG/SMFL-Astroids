@@ -11,7 +11,7 @@ void Astroids::initilizeWindow() {
 
 void Astroids::initilizeTextures() {
     this->textures["BULLET"] = new sf::Texture();
-    this->textures["BULLET"]->loadFromFile("SMFL-Astroids/images/Bullet.png");
+    this->textures["BULLET"]->loadFromFile("/home/puhaa/Desktop/SMFL-Astroids/images/Bullet3.png");
     
 }
 
@@ -68,8 +68,8 @@ void Astroids::updateInput() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         this->player->move(0.f, 1.f);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x, this->player->getPos().y, 0.f, -1.f, 5.f));
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) {
+        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x, this->player->getPos().y, 0.f, -1.f, 1.f));
     }
 }
 
@@ -100,6 +100,8 @@ void Astroids::update() {
     this->updatePollEvents();
 
     this->updateInput();
+
+    this->player->update();
 
     this->updateBullets();
     
