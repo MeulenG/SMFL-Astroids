@@ -1,6 +1,7 @@
 #include "Astroids.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Enemy.h"
 
 // this is our window function with a resolution of 800x800 and you can close, resize it and it has a title bar. 120 FPS, no Vsync
 void Astroids::initilizeWindow() {
@@ -18,11 +19,20 @@ void Astroids::initilizeTextures() {
 
 void Astroids::initilizePlayer() {
     this->player = new Player();
+    
 }
+
+void Astroids::initilizeEnemies() {
+    this->spawnTimerMax = 20.f;
+    this->spawnTimer = this->spawnTimerMax;
+
+}
+
 Astroids::Astroids() {
     this->initilizeWindow();
     this->initilizeTextures();
     this->initilizePlayer();
+    this->initilizeEnemies();
 }
 
 
@@ -40,6 +50,10 @@ Astroids::~Astroids() {
         delete i;
     }
     
+    for (auto *i : this->enemies)
+    {
+        delete i;
+    }
 }
 
 //Function
@@ -59,17 +73,17 @@ void Astroids::updatePollEvents() {
 
 void Astroids::updateInput() {
         // Moves the player
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         this->player->move(-1.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         this->player->move(1.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         this->player->move(0.f, -1.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         this->player->move(0.f, 1.f);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) {
-        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x, this->player->getPos().y, 0.f, -1.f, 1.f));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->player->canAttack()) {
+        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x + this->player->getBounds().width/2.f, this->player->getPos().y, 0.f, -1.f, 1.f));
     }
 }
 
@@ -94,6 +108,25 @@ void Astroids::updateBullets()
 
 }
 
+void Astroids::updateEnemies() {
+    this->spawnTimer += 0.5f;
+    if (this->spawnTimer >= this->spawnTimerMax)
+    {
+        this->enemies.push_back(new Enemy(rand()%200, rand() % 200));
+        this->spawnTimer = 0.f;
+
+    }
+    
+
+    for (auto *enemy : this->bullets)
+    {
+        enemy->update();
+    }
+
+
+}
+
+
 
 void Astroids::update() {
     
@@ -104,6 +137,8 @@ void Astroids::update() {
     this->player->update();
 
     this->updateBullets();
+
+    this->updateEnemies();
     
     
     sf::Event e;
@@ -133,7 +168,12 @@ void Astroids::render(){
     {
         bullet->render(this->window);
     }
-    
+
+    for (auto *enemy : this->bullets)
+    {
+        enemy->render(this->window);
+    }
+
 
     this->window->display();
 }

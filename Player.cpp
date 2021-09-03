@@ -38,6 +38,12 @@ const sf::Vector2f& Player::getPos() const
     return this->Sprite.getPosition();
 }
 
+const sf::FloatRect Player::getBounds() const {
+
+    return this->Sprite.getGlobalBounds();
+}
+
+
 
 void Player::move(const float dirX, const float dirY) {
     this->Sprite.move(this->movementspeed * dirX, this->movementspeed * dirY);

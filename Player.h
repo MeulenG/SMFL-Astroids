@@ -17,9 +17,12 @@ public:
     float attackCooldown;
     float attackCooldownMax;
     const sf::Vector2f& getPos() const;
+    const sf::FloatRect getBounds() const;
 
     void move(const float dirX, const float dirY);
     const bool canAttack();
+
+
     void updateAttack();
     void update();
     void render(sf::RenderTarget& target);

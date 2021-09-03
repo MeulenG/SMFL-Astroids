@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Bullet.h"
 #include <map>
+#include "Enemy.h"
 
 
 class Astroids {
@@ -17,9 +18,14 @@ class Astroids {
     
     Player* player;
 
+    float spawnTimer;
+    float spawnTimerMax;
+    std::vector<Enemy* > enemies;
+
     void initilizeWindow();
     void initilizeTextures();
     void initilizePlayer();
+    void initilizeEnemies();
     
     public:
         Astroids();
@@ -30,6 +36,7 @@ class Astroids {
         void updatePollEvents();
         void updateInput();
         void updateBullets();
+        void updateEnemies();
         void update();
         void render();
 };

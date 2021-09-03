@@ -4,10 +4,23 @@
 class Enemy
 {
 private:
-    
+    sf::CircleShape shape;
+
+    int type;
+    int hp;
+    int hpMax;
+    int damage;
+    int points;
+
+    void initShape();
+    void initVariables();
+
 public:
-    Enemy(/* args */);
+    Enemy(float posX, float posY);
     ~Enemy();
+
+    void update();
+    void render(sf::RenderTarget* target);
 };
 
 
