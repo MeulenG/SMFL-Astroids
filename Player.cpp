@@ -3,7 +3,7 @@
 #include "stdio.h"
 
 void Player::initVariables() {
-    this->movementspeed = 1.f;
+    this->movementspeed = 2.f;
     this->attackCooldownMax = 10.f;
     this->attackCooldown = this->attackCooldownMax;
 }

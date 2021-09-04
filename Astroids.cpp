@@ -16,6 +16,21 @@ void Astroids::initilizeTextures() {
     
 }
 
+void Astroids::intilizeGUI() {
+    //Loads our Font
+    if(!this->font.loadFromFile("/home/puhaa/Desktop/SMFL-Astroids/images/PixellettersFull.ttf"))
+        std::cout << "ERROR AT FONT";
+
+    //Intilize Point Text
+    this->pointText.setFont(this->font);
+    this->pointText.setCharacterSize(12);
+    this->pointText.setFillColor(sf::Color::White);
+    this->pointText.setString("test");
+
+}
+
+
+
 
 void Astroids::initilizePlayer() {
     this->player = new Player();
@@ -31,6 +46,7 @@ void Astroids::initilizeEnemies() {
 Astroids::Astroids() {
     this->initilizeWindow();
     this->initilizeTextures();
+    this->intilizeGUI();
     this->initilizePlayer();
     this->initilizeEnemies();
 }
@@ -87,6 +103,13 @@ void Astroids::updateInput() {
     }
 }
 
+void updateGUI() {
+
+
+
+}
+
+
 void Astroids::updateBullets() 
 {
     unsigned counter = 0;
@@ -108,20 +131,39 @@ void Astroids::updateBullets()
 
 }
 
-void Astroids::updateEnemies() {
+void Astroids::updateEnemiesAndCombat() {
     this->spawnTimer += 0.5f;
     if (this->spawnTimer >= this->spawnTimerMax)
     {
-        this->enemies.push_back(new Enemy(rand()%200, rand() % 200));
+        this->enemies.push_back(new Enemy(rand() % this->window->getSize().x-20.f, -100.f));
         this->spawnTimer = 0.f;
 
     }
-    
 
-    for (auto *enemy : this->bullets)
+
+
+    for (int i = 0; i < this->enemies.size(); ++i)
     {
-        enemy->update();
+        bool enemy_removed = false;
+        this->enemies[i]->update();
+        for (size_t k = 0; k < this->bullets.size() && !enemy_removed; k++)
+    {
+        if(this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds()))
+        {
+            this->bullets.erase(this->bullets.begin() + k);
+            this->enemies.erase(this->enemies.begin() + i);
+            enemy_removed = true;
+        }
     }
+    if(!enemy_removed)
+    {
+        if(this->enemies[i]->getBounds().top > this->window->getSize().y)
+        {
+            this->enemies.erase(this->enemies.begin() + i);
+            enemy_removed = true;
+        }
+    }
+}
 
 
 }
@@ -138,7 +180,9 @@ void Astroids::update() {
 
     this->updateBullets();
 
-    this->updateEnemies();
+    this->updateEnemiesAndCombat();
+
+    this->updateGUI();
     
     
     sf::Event e;
@@ -158,6 +202,12 @@ void Astroids::update() {
     
 }
 
+void Astroids::renderGUI() {
+    this->window->draw(this->pointText);
+
+}
+
+
 void Astroids::render(){
     this->window->clear();
 
@@ -169,11 +219,12 @@ void Astroids::render(){
         bullet->render(this->window);
     }
 
-    for (auto *enemy : this->bullets)
+    for (auto *enemy : this->enemies)
     {
         enemy->render(this->window);
     }
 
-
+    this->renderGUI();
+    
     this->window->display();
 }

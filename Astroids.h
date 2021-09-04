@@ -22,8 +22,13 @@ class Astroids {
     float spawnTimerMax;
     std::vector<Enemy* > enemies;
 
+    //GUI
+    sf::Font font;
+    sf::Text pointText;
+
     void initilizeWindow();
     void initilizeTextures();
+    void intilizeGUI();
     void initilizePlayer();
     void initilizeEnemies();
     
@@ -35,9 +40,11 @@ class Astroids {
 
         void updatePollEvents();
         void updateInput();
+        void updateGUI();
         void updateBullets();
-        void updateEnemies();
+        void updateEnemiesAndCombat();
         void update();
+        void renderGUI();
         void render();
 };
 #endif
