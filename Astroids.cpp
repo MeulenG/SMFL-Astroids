@@ -5,7 +5,7 @@
 
 // this is our window function with a resolution of 800x800 and you can close, resize it and it has a title bar. 120 FPS, no Vsync
 void Astroids::initilizeWindow() {
-    this->window = new sf::RenderWindow(sf::VideoMode(800, 800), "Most Epic Remake of Astroids with SMFL", sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
+    this->window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Most Epic Remake of Astroids with SMFL", sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
     this->window->setFramerateLimit(120);
     this->window->setVerticalSyncEnabled(false);
 }
@@ -27,8 +27,29 @@ void Astroids::intilizeGUI() {
     this->pointText.setFillColor(sf::Color::White);
     this->pointText.setString("test");
 
+    //Player
+    this->playerHpBar.setSize(sf::Vector2f(300.f, 25.f));
+    this->playerHpBar.setFillColor(sf::Color::Red);
+    this->playerHpBar.setPosition(sf::Vector2f(20.f, 20.f));
+    
+    this->playerHpBack = this->playerHpBar;
+    this->playerHpBack.setFillColor(sf::Color(25, 25, 25, 200));
+
+
 }
 
+void Astroids::intilizeWorld() {
+    if(this->worldBackGroundTex.loadFromFile("/home/puhaa/Desktop/SMFL-Astroids/images/background1920x1080.png")) {
+        std::cout << "ERROR COULD NOT LOAD WORLDBACKGROUND";
+    }
+    this->worldBackground.setTexture(this->worldBackGroundTex);
+    
+}
+
+void Astroids::intilizeSystems() {
+    this->points = 0;
+
+}
 
 
 
@@ -47,6 +68,8 @@ Astroids::Astroids() {
     this->initilizeWindow();
     this->initilizeTextures();
     this->intilizeGUI();
+    this->intilizeWorld();
+    this->intilizeSystems();
     this->initilizePlayer();
     this->initilizeEnemies();
 }
@@ -99,14 +122,55 @@ void Astroids::updateInput() {
         this->player->move(0.f, 1.f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->player->canAttack()) {
-        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x + this->player->getBounds().width/2.f, this->player->getPos().y, 0.f, -1.f, 1.f));
+        this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPos().x + this->player->getBounds().width/2.f, this->player->getPos().y, 0.f, -1.f, 4.f));
     }
 }
 
-void updateGUI() {
+void Astroids::updateGUI() {
+    std::stringstream ss;
+
+    ss << "Points: " << this->points;
+
+    this->pointText.setString(ss.str());
 
 
+    //Update Player GUI
 
+    this->player->setHp(5);
+    float hpPercent = static_cast<float>(this->player->getHp()) / this->player->getHpMax();
+    this->playerHpBar.setSize(sf::Vector2f(300.f * hpPercent, this->playerHpBar.getSize().y));
+
+}
+
+void Astroids::updateWorld() {
+
+
+}
+
+void Astroids::updateCollision() {
+    //Left WOrld Collision
+    if (this->player->getBounds().left < 0.f)
+    {
+        this->player->setPosition(0.f, this->player->getBounds().top);
+    }
+    //Right World Collision
+    else if (this->player->getBounds().left + this->player->getBounds().width >= this->window->getSize().x)
+    {
+        this->player->setPosition(this->window->getSize().x - this->player->getBounds().width, this->player->getBounds().top);
+    }
+
+
+    //Top World Collision
+    if (this->player->getBounds().top < 0.f)
+    {
+        this->player->setPosition(this->player->getBounds().left, 0.f);
+    }
+    //Bottom World Collision
+    else if (this->player->getBounds().top + this->player->getBounds().height >= this->window->getSize().y)
+    {
+        this->player->setPosition(this->player->getBounds().left, this->window->getSize().y - this->player->getBounds().height);
+    }
+        
 }
 
 
@@ -131,7 +195,10 @@ void Astroids::updateBullets()
 
 }
 
-void Astroids::updateEnemiesAndCombat() {
+void Astroids::updateEnemies() {
+
+
+
     this->spawnTimer += 0.5f;
     if (this->spawnTimer >= this->spawnTimerMax)
     {
@@ -140,34 +207,59 @@ void Astroids::updateEnemiesAndCombat() {
 
     }
 
+    unsigned counter = 0;
+    for (auto *enemy : this->enemies)
+    {
+        enemy->update();
 
+
+        //Bullet culling (top of screen)
+        if(enemy->getBounds().top > this->window->getSize().y) 
+        {
+            //Deletes bullets
+            delete this->enemies.at(counter);
+            this->enemies.erase(this->enemies.begin()+ counter);
+            --counter;
+        }
+
+        else if (enemy->getBounds().intersects(this->player->getBounds())) {
+            delete this->enemies.at(counter);
+            this->enemies.erase(this->enemies.begin()+ counter);
+            --counter;
+        }
+        ++counter;
+    }
+
+
+
+}
+
+void Astroids::updateCombat() {
 
     for (int i = 0; i < this->enemies.size(); ++i)
     {
-        bool enemy_removed = false;
-        this->enemies[i]->update();
-        for (size_t k = 0; k < this->bullets.size() && !enemy_removed; k++)
-    {
-        if(this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds()))
+        bool enemy_deleted = false;
+        for (size_t k = 0; k < this->bullets.size() && enemy_deleted == false; k++)
         {
-            this->bullets.erase(this->bullets.begin() + k);
-            this->enemies.erase(this->enemies.begin() + i);
-            enemy_removed = true;
+            if(this->enemies[i]->getBounds().intersects(this->bullets[k]->getBounds())) {
+
+                this->points += this->enemies[i]->getPoints();
+
+                delete this->enemies[i];
+                this->enemies.erase(this->enemies.begin() + i);
+
+
+                delete this->bullets[k];
+                this->bullets.erase(this->bullets.begin() + k);
+                
+
+                enemy_deleted = true;
+            }
         }
+        
     }
-    if(!enemy_removed)
-    {
-        if(this->enemies[i]->getBounds().top > this->window->getSize().y)
-        {
-            this->enemies.erase(this->enemies.begin() + i);
-            enemy_removed = true;
-        }
-    }
-}
-
 
 }
-
 
 
 void Astroids::update() {
@@ -178,11 +270,17 @@ void Astroids::update() {
 
     this->player->update();
 
+    this->updateCollision();
+
     this->updateBullets();
 
-    this->updateEnemiesAndCombat();
+    this->updateEnemies();
+
+    this->updateCombat();
 
     this->updateGUI();
+
+    this->updateWorld();
     
     
     sf::Event e;
@@ -204,12 +302,20 @@ void Astroids::update() {
 
 void Astroids::renderGUI() {
     this->window->draw(this->pointText);
+    this->window->draw(this->playerHpBack);
+    this->window->draw(this->playerHpBar);
 
+}
+
+void Astroids::renderWorld() {
+    this->window->draw(this->worldBackground);
 }
 
 
 void Astroids::render(){
     this->window->clear();
+
+    this->renderWorld();
 
     //Draws all the stuff
     this->player->render(*this->window);

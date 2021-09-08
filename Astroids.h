@@ -6,6 +6,8 @@
 #include "Bullet.h"
 #include <map>
 #include "Enemy.h"
+#include <string>
+#include <sstream>
 
 
 class Astroids {
@@ -26,9 +28,25 @@ class Astroids {
     sf::Font font;
     sf::Text pointText;
 
+
+    //Player GUI
+    sf::RectangleShape playerHpBar;
+    sf::RectangleShape playerHpBack;
+
+
+    //Systems
+    unsigned points;
+
+    //World
+    sf::Texture worldBackGroundTex;
+    sf::Sprite worldBackground;
+
+
     void initilizeWindow();
     void initilizeTextures();
     void intilizeGUI();
+    void intilizeWorld();
+    void intilizeSystems();
     void initilizePlayer();
     void initilizeEnemies();
     
@@ -41,10 +59,14 @@ class Astroids {
         void updatePollEvents();
         void updateInput();
         void updateGUI();
+        void updateWorld();
+        void updateCollision();
         void updateBullets();
-        void updateEnemiesAndCombat();
+        void updateEnemies();
+        void updateCombat();
         void update();
         void renderGUI();
+        void renderWorld();
         void render();
 };
 #endif

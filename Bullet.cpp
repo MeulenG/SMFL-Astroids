@@ -10,7 +10,7 @@ Bullet::~Bullet() {
 }
 
 void Bullet::initBullet() {
-    this->shape.scale(0.1f, 0.1f);
+    this->shape.scale(0.4f, 0.4f);
 }
 
 Bullet::Bullet(sf::Texture * texture, float pos_x, float pos_y, float dirX, float dirY, float movement_speed) {
